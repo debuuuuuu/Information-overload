@@ -20,6 +20,7 @@ interface DashboardViewProps {
   onQuickUsefulFeedback: (clusterId: string) => void;
   onNavigateToTab: (tab: string) => void;
   onConsumptionStyleChange: (style: ConsumptionStyle) => void;
+  onOpenClusterDetail: (cluster: Cluster) => void;
 }
 
 export const DashboardView: React.FC<DashboardViewProps> = ({
@@ -32,7 +33,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onOpenFeedback,
   onQuickUsefulFeedback,
   onNavigateToTab,
-  onConsumptionStyleChange
+  onConsumptionStyleChange,
+  onOpenClusterDetail
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [expandedDigest, setExpandedDigest] = useState(false);
@@ -478,6 +480,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   onOpenSources={onOpenSources}
                   onOpenFeedback={onOpenFeedback}
                   onQuickUsefulFeedback={onQuickUsefulFeedback}
+                  onOpenClusterDetail={onOpenClusterDetail}
                 />
               </div>
             ))}
@@ -514,6 +517,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   onOpenSources={onOpenSources}
                   onOpenFeedback={onOpenFeedback}
                   onQuickUsefulFeedback={onQuickUsefulFeedback}
+                  onOpenClusterDetail={onOpenClusterDetail}
                 />
               </div>
             ))}
@@ -570,6 +574,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     onOpenSources={onOpenSources}
                     onOpenFeedback={onOpenFeedback}
                     onQuickUsefulFeedback={onQuickUsefulFeedback}
+                    onOpenClusterDetail={onOpenClusterDetail}
                   />
                 </div>
               ))}
@@ -592,6 +597,7 @@ interface FolderCardProps {
   onOpenSources: (cluster: Cluster) => void;
   onOpenFeedback: (cluster: Cluster) => void;
   onQuickUsefulFeedback: (clusterId: string) => void;
+  onOpenClusterDetail: (cluster: Cluster) => void;
 }
 
 const FolderCard: React.FC<FolderCardProps> = ({
@@ -601,7 +607,8 @@ const FolderCard: React.FC<FolderCardProps> = ({
   onOpenImportance,
   onOpenSources,
   onOpenFeedback,
-  onQuickUsefulFeedback
+  onQuickUsefulFeedback,
+  onOpenClusterDetail
 }) => {
   const [feedbackGiven, setFeedbackGiven] = useState<boolean | null>(null);
 
