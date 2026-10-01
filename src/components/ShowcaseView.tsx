@@ -664,164 +664,104 @@ export const ShowcaseView: React.FC<ShowcaseViewProps> = ({
                 )}
               </div>
 
-              {/* Radial Fan Spoke Graphic with Live Streaming Photons, Sonar Waves & Hover Spotlight */}
-              <div style={{ height: '240px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-                <svg viewBox="0 0 400 240" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
-                  {/* Central Sonar Expanding Radar Rings */}
-                  <circle cx="100" cy="180" r="5" fill="none" stroke="#0028FF" strokeWidth="1.5">
-                    <animate attributeName="r" values="5;46" dur="2.4s" repeatCount="indefinite" />
+              {/* Radial Fan — angles -50° to +50°, origin left-center, length 115 — all nodes within 240px */}
+              <div style={{ height: '240px', position: 'relative', overflow: 'hidden', borderRadius: '12px' }}>
+                <svg viewBox="0 0 380 240" width="100%" height="100%">
+                  {/* Sonar rings at origin */}
+                  <circle cx="80" cy="120" r="5" fill="none" stroke="#0028FF" strokeWidth="1.5">
+                    <animate attributeName="r" values="5;42" dur="2.4s" repeatCount="indefinite" />
                     <animate attributeName="opacity" values="0.9;0" dur="2.4s" repeatCount="indefinite" />
                   </circle>
-                  <circle cx="100" cy="180" r="5" fill="none" stroke="#60A5FA" strokeWidth="1">
-                    <animate attributeName="r" values="5;46" begin="1.2s" dur="2.4s" repeatCount="indefinite" />
+                  <circle cx="80" cy="120" r="5" fill="none" stroke="#60A5FA" strokeWidth="1">
+                    <animate attributeName="r" values="5;42" begin="1.2s" dur="2.4s" repeatCount="indefinite" />
                     <animate attributeName="opacity" values="0.75;0" dur="2.4s" repeatCount="indefinite" />
                   </circle>
-                  <circle cx="100" cy="180" r="5" fill="#FFFFFF" style={{ filter: 'drop-shadow(0 0 10px #0028FF)' }}>
+                  <circle cx="80" cy="120" r="5" fill="#FFFFFF" style={{ filter: 'drop-shadow(0 0 10px #0028FF)' }}>
                     <animate attributeName="r" values="5;6.5;5" dur="1.8s" repeatCount="indefinite" />
                   </circle>
 
+                  {/* 12 spokes, evenly from -50° to +50° (step ~9.1°) */}
                   {[
-                    { angle: -65, label: 'Feed', size: 10, dots: 7, desc: 'Real-time Signal Stream // 94k MAU' },
-                    { angle: -52, label: 'Graph', size: 12, dots: 8, desc: 'Neo4j Topologies // 128k MAU' },
-                    { angle: -40, label: 'MCP', size: 8, dots: 6, desc: 'Model Context Protocol // 52k MAU' },
-                    { angle: -28, label: 'Digest', size: 14, dots: 9, desc: 'Cognitive Synthesis // 142k MAU' },
-                    { angle: -16, label: 'Rules', size: 7, dots: 5, desc: 'Attention Routing // 44k MAU' },
-                    { angle: -4, label: 'Audit', size: 11, dots: 8, desc: 'Verifiable Provenance // 88k MAU' },
-                    { angle: 8, label: 'Quiet', size: 9, dots: 6, desc: 'Entropy Throttling // 68k MAU' },
-                    { angle: 20, label: 'Ask', size: 13, dots: 9, desc: 'Natural Language Search // 134k MAU' },
-                    { angle: 32, label: 'Sync', size: 8, dots: 5, desc: 'State Conduits // 58k MAU' },
-                    { angle: 44, label: 'Tokens', size: 6, dots: 4, desc: 'Embedding Vectors // 36k MAU' },
-                    { angle: 56, label: 'Safety', size: 10, dots: 7, desc: 'Entropy Quarantine // 76k MAU' },
-                    { angle: 68, label: 'Search', size: 11, dots: 8, desc: 'Similarity Index // 92k MAU' }
+                    { angle: -50, label: 'Feed',   size: 10, dots: 7 },
+                    { angle: -41, label: 'Graph',  size: 12, dots: 8 },
+                    { angle: -32, label: 'MCP',    size: 8,  dots: 6 },
+                    { angle: -23, label: 'Digest', size: 14, dots: 9 },
+                    { angle: -14, label: 'Rules',  size: 7,  dots: 5 },
+                    { angle:  -5, label: 'Audit',  size: 11, dots: 8 },
+                    { angle:   5, label: 'Quiet',  size: 9,  dots: 6 },
+                    { angle:  14, label: 'Ask',    size: 13, dots: 9 },
+                    { angle:  23, label: 'Sync',   size: 8,  dots: 5 },
+                    { angle:  32, label: 'Tokens', size: 6,  dots: 4 },
+                    { angle:  41, label: 'Safety', size: 10, dots: 7 },
+                    { angle:  50, label: 'Search', size: 11, dots: 8 }
                   ].map((spoke, idx) => {
                     const rad = (spoke.angle * Math.PI) / 180;
-                    const length = 160;
-                    const endX = 100 + Math.cos(rad) * length;
-                    const endY = 180 + Math.sin(rad) * length;
+                    const len = 115;
+                    const ox = 80, oy = 120;
+                    const endX = ox + Math.cos(rad) * len;
+                    const endY = oy + Math.sin(rad) * len;
                     const isHovered = hoveredSpoke === idx;
                     const isAnyHovered = hoveredSpoke !== null;
-                    const opacity = isHovered ? 1 : isAnyHovered ? 0.3 : 1;
                     const speed = 1.6 + (idx % 4) * 0.35;
 
                     return (
-                      <g
-                        key={idx}
-                        style={{ cursor: 'pointer', transition: 'all 0.25s ease', opacity }}
+                      <g key={idx}
+                        style={{ cursor: 'pointer', opacity: isHovered ? 1 : isAnyHovered ? 0.28 : 1, transition: 'opacity 0.25s ease' }}
                         onMouseEnter={() => setHoveredSpoke(idx)}
                         onMouseLeave={() => setHoveredSpoke(null)}
                       >
-                        {/* Spoke Line */}
-                        <line
-                          x1="100"
-                          y1="180"
-                          x2={endX}
-                          y2={endY}
+                        {/* Spoke */}
+                        <line x1={ox} y1={oy} x2={endX} y2={endY}
                           className="anim-spoke-line"
-                          stroke={isHovered ? '#0028FF' : idx === 1 || idx === 3 ? 'rgba(0, 40, 255, 0.45)' : 'rgba(255, 255, 255, 0.24)'}
-                          strokeWidth={isHovered ? '2.5' : '1.2'}
-                          style={{
-                            filter: isHovered ? 'drop-shadow(0 0 10px #0028FF)' : 'none',
-                            transition: 'stroke 0.2s ease, stroke-width 0.2s ease'
-                          }}
+                          stroke={isHovered ? '#0028FF' : idx === 1 || idx === 3 ? 'rgba(0,40,255,0.5)' : 'rgba(255,255,255,0.22)'}
+                          strokeWidth={isHovered ? '2.5' : '1.1'}
+                          style={{ filter: isHovered ? 'drop-shadow(0 0 8px #0028FF)' : 'none', transition: 'all 0.2s' }}
                         />
-
-                        {/* Streaming Photon Packet Zooming Outward */}
-                        <circle
-                          r={isHovered ? 3.5 : 2.5}
-                          fill={isHovered ? '#FFFFFF' : '#60A5FA'}
-                          style={{ filter: 'drop-shadow(0 0 8px #0028FF)' }}
+                        {/* Photon packet */}
+                        <circle r={isHovered ? 3 : 2} fill={isHovered ? '#FFFFFF' : '#60A5FA'}
+                          style={{ filter: 'drop-shadow(0 0 6px #0028FF)' }}
                         >
-                          <animate
-                            attributeName="cx"
-                            values={`100;${endX}`}
-                            dur={`${speed}s`}
-                            repeatCount="indefinite"
-                          />
-                          <animate
-                            attributeName="cy"
-                            values={`180;${endY}`}
-                            dur={`${speed}s`}
-                            repeatCount="indefinite"
-                          />
-                          <animate
-                            attributeName="opacity"
-                            values="0;1;1;0"
-                            keyTimes="0;0.12;0.88;1"
-                            dur={`${speed}s`}
-                            repeatCount="indefinite"
-                          />
+                          <animate attributeName="cx" values={`${ox};${endX}`} dur={`${speed}s`} repeatCount="indefinite" />
+                          <animate attributeName="cy" values={`${oy};${endY}`} dur={`${speed}s`} repeatCount="indefinite" />
+                          <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur={`${speed}s`} repeatCount="indefinite" />
                         </circle>
-
-                        {/* Intermediate Dots on Spoke with subtle wave shimmer */}
+                        {/* Intermediate dots */}
                         {Array.from({ length: spoke.dots }).map((_, dIdx) => {
-                          const dist = 30 + (dIdx / spoke.dots) * (length - 40);
-                          const dotX = 100 + Math.cos(rad) * dist;
-                          const dotY = 180 + Math.sin(rad) * dist;
+                          const d = 22 + (dIdx / spoke.dots) * (len - 28);
                           return (
-                            <circle
-                              key={dIdx}
-                              cx={dotX}
-                              cy={dotY}
-                              r={isHovered ? '2.5' : '1.8'}
+                            <circle key={dIdx}
+                              cx={ox + Math.cos(rad) * d} cy={oy + Math.sin(rad) * d}
+                              r={isHovered ? 2.2 : 1.6}
                               fill={isHovered ? '#93C5FD' : '#475569'}
-                              style={{ transition: 'fill 0.2s ease' }}
+                              style={{ transition: 'fill 0.2s' }}
                             >
-                              <animate
-                                attributeName="opacity"
-                                values="0.4;1;0.4"
-                                dur={`${2 + (dIdx % 3) * 0.5}s`}
-                                repeatCount="indefinite"
-                              />
+                              <animate attributeName="opacity" values="0.35;0.9;0.35" dur={`${2 + (dIdx % 3) * 0.4}s`} repeatCount="indefinite" />
                             </circle>
                           );
                         })}
-
-                        {/* Node Outer Halo Ring */}
-                        <circle
-                          cx={endX}
-                          cy={endY}
-                          r={isHovered ? spoke.size / 2 + 5 : spoke.size / 2 + 2}
-                          fill="none"
-                          stroke={isHovered ? '#0028FF' : '#60A5FA'}
-                          strokeWidth="1"
+                        {/* Halo ring */}
+                        <circle cx={endX} cy={endY} fill="none"
+                          stroke={isHovered ? '#0028FF' : '#60A5FA'} strokeWidth="1"
                         >
-                          <animate
-                            attributeName="r"
-                            values={`${spoke.size / 2 + 1};${spoke.size / 2 + 6};${spoke.size / 2 + 1}`}
-                            dur="2.4s"
-                            repeatCount="indefinite"
-                          />
-                          <animate
-                            attributeName="opacity"
-                            values="0.25;0.8;0.25"
-                            dur="2.4s"
-                            repeatCount="indefinite"
-                          />
+                          <animate attributeName="r" values={`${spoke.size/2+1};${spoke.size/2+5};${spoke.size/2+1}`} dur="2.4s" repeatCount="indefinite" />
+                          <animate attributeName="opacity" values="0.2;0.75;0.2" dur="2.4s" repeatCount="indefinite" />
                         </circle>
-
-                        {/* Destination Node Circle */}
-                        <circle
-                          cx={endX}
-                          cy={endY}
-                          r={isHovered ? spoke.size / 2 + 3 : spoke.size / 2}
+                        {/* End node */}
+                        <circle cx={endX} cy={endY}
+                          r={isHovered ? spoke.size / 2 + 2 : spoke.size / 2}
                           fill={isHovered ? '#0028FF' : idx === 1 || idx === 3 ? '#0028FF' : '#FFFFFF'}
-                          style={{
-                            filter: isHovered ? 'drop-shadow(0 0 14px #0028FF)' : 'drop-shadow(0 0 6px rgba(0, 40, 255, 0.5))',
-                            transition: 'all 0.2s ease'
-                          }}
+                          style={{ filter: isHovered ? 'drop-shadow(0 0 12px #0028FF)' : 'drop-shadow(0 0 5px rgba(0,40,255,0.5))', transition: 'all 0.2s' }}
                         />
-
-                        {/* Node Label */}
+                        {/* Label — always to the right of end node */}
                         <text
-                          x={endX + (Math.cos(rad) * 18)}
-                          y={endY + (Math.sin(rad) * 18)}
-                          fontSize={isHovered ? '10' : '9'}
-                          fontWeight={isHovered ? '800' : '600'}
+                          x={endX + 10}
+                          y={endY}
+                          fontSize="8"
+                          fontWeight={isHovered ? '800' : '500'}
                           fill={isHovered ? '#FFFFFF' : '#94A3B8'}
                           fontFamily="Inter"
-                          textAnchor="middle"
-                          alignmentBaseline="middle"
-                          style={{ transition: 'all 0.2s ease' }}
+                          textAnchor="start"
+                          dominantBaseline="middle"
                         >
                           {spoke.label}
                         </text>
@@ -881,86 +821,75 @@ export const ShowcaseView: React.FC<ShowcaseViewProps> = ({
                 </div>
               </div>
 
-              {/* Vertical Dot Matrix Stack Graphic with Living Ascending Wave & Peak Beacons */}
-              <div style={{ height: '240px', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-around', paddingBottom: '16px' }}>
+              {/* Dot cascade — scaled counts so tallest bar (14 dots × 7px) + label fits 200px */}
+              <div style={{ height: '200px', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-around', overflow: 'hidden' }}>
                 {[
-                  { label: 'Latency', count: 3, num: 6, fix: 'Sub-50ms Edge Cache' },
-                  { label: 'Token drift', count: 5, num: 10, fix: 'Vector Normalization' },
-                  { label: 'Duplicate', count: 7, num: 14, fix: 'MinHash Deduplication' },
-                  { label: 'RSS 404', count: 9, num: 18, fix: 'Self-Healing Fallbacks' },
-                  { label: 'Hallucination', count: 11, num: 22, fix: 'Grounded Citation Checks' },
-                  { label: 'MCP timeout', count: 14, num: 28, fix: 'Async Circuit Breaker' },
-                  { label: 'Schema break', count: 18, num: 36, fix: 'Resilient Extraction' },
-                  { label: 'Spam burst', count: 22, num: 44, fix: 'Entropy Filter' },
-                  { label: 'Noise flood', count: 27, num: 54, fix: 'Semantic Clustering' }
+                  { label: 'Latency',  count: 2,  num: 6  },
+                  { label: 'Token',    count: 3,  num: 10 },
+                  { label: 'Dupl.',    count: 4,  num: 14 },
+                  { label: 'RSS 404',  count: 5,  num: 18 },
+                  { label: 'Hallu.',   count: 6,  num: 22 },
+                  { label: 'MCP',      count: 8,  num: 28 },
+                  { label: 'Schema',   count: 10, num: 36 },
+                  { label: 'Spam',     count: 12, num: 44 },
+                  { label: 'Noise',    count: 14, num: 54 }
                 ].map((stack, idx) => {
                   const isHovered = hoveredStack === idx;
                   const isPeak = idx === 8;
 
                   return (
-                    <div
-                      key={idx}
+                    <div key={idx}
                       onMouseEnter={() => setHoveredStack(idx)}
                       onMouseLeave={() => setHoveredStack(null)}
                       style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        gap: '3px',
-                        cursor: 'pointer',
-                        transform: isHovered ? 'translateY(-6px)' : 'translateY(0)',
+                        display: 'flex', flexDirection: 'column', alignItems: 'center',
+                        gap: '2px', cursor: 'pointer', flexShrink: 0,
+                        transform: isHovered ? 'translateY(-4px)' : 'none',
                         transition: 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
                       }}
                     >
+                      {/* Count */}
                       <span style={{
-                        fontSize: '0.68rem',
+                        fontSize: '0.65rem', fontWeight: 800, lineHeight: 1, marginBottom: '3px',
                         color: isHovered || isPeak ? '#60A5FA' : '#CBD5E1',
-                        fontWeight: 800,
-                        marginBottom: '4px',
+                        textShadow: isHovered || isPeak ? '0 0 10px rgba(0,40,255,0.9)' : 'none',
                         animation: isPeak ? 'peakBeacon 2s ease-in-out infinite' : undefined,
-                        textShadow: isHovered || isPeak ? '0 0 10px rgba(0, 40, 255, 0.9)' : 'none',
                         transition: 'color 0.2s ease'
                       }}>
                         {stack.num}
                       </span>
-                      <div style={{ display: 'flex', flexDirection: 'column-reverse', gap: '3px' }}>
+
+                      {/* Dots — stacked bottom to top */}
+                      <div style={{ display: 'flex', flexDirection: 'column-reverse', gap: '2px' }}>
                         {Array.from({ length: stack.count }).map((_, dIdx) => {
                           const isTop = dIdx === stack.count - 1;
-                          const delay = ((idx * 0.18 + dIdx * 0.09) % 2.6).toFixed(2);
-
+                          const delay = ((idx * 0.18 + dIdx * 0.1) % 2.6).toFixed(2);
                           return (
-                            <span
-                              key={dIdx}
-                              style={{
-                                width: isHovered ? '6.5px' : '5px',
-                                height: isHovered ? '6.5px' : '5px',
-                                borderRadius: '50%',
-                                background: isHovered
-                                  ? '#0028FF'
-                                  : isTop
-                                  ? (isPeak ? '#0028FF' : '#FFFFFF')
-                                  : '#334155',
-                                boxShadow: isHovered || (isPeak && isTop) ? '0 0 10px #0028FF' : undefined,
-                                animation: !isHovered && !isTop
-                                  ? `dotAscend 2.6s ease-in-out infinite`
-                                  : isTop && isPeak
-                                  ? `peakBeacon 1.8s ease-in-out infinite`
-                                  : undefined,
-                                animationDelay: `${delay}s`,
-                                transition: 'all 0.2s ease'
-                              }}
-                            />
+                            <span key={dIdx} style={{
+                              width: isHovered ? '7px' : '5px',
+                              height: isHovered ? '7px' : '5px',
+                              borderRadius: '50%',
+                              background: isHovered ? '#0028FF' : isTop ? (isPeak ? '#0028FF' : '#FFFFFF') : '#334155',
+                              boxShadow: isHovered || (isPeak && isTop) ? '0 0 8px #0028FF' : undefined,
+                              animation: !isHovered && !isTop ? 'dotAscend 2.6s ease-in-out infinite'
+                                : isTop && isPeak ? 'peakBeacon 1.8s ease-in-out infinite' : undefined,
+                              animationDelay: `${delay}s`,
+                              transition: 'all 0.2s ease'
+                            }} />
                           );
                         })}
                       </div>
+
+                      {/* Rotated label */}
                       <span style={{
-                        fontSize: '0.64rem',
+                        fontSize: '0.58rem',
                         color: isHovered ? '#FFFFFF' : '#64748B',
                         fontWeight: isHovered ? 700 : 400,
                         writingMode: 'vertical-rl',
                         transform: 'rotate(180deg)',
-                        marginTop: '8px',
-                        height: '52px',
+                        marginTop: '5px',
+                        maxHeight: '40px',
+                        overflow: 'hidden',
                         transition: 'color 0.2s ease'
                       }}>
                         {stack.label}
@@ -1341,8 +1270,8 @@ export const ShowcaseView: React.FC<ShowcaseViewProps> = ({
                 )}
               </div>
 
-              <div style={{ height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg viewBox="0 0 300 220" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
+              <div style={{ height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                <svg viewBox="0 0 300 220" style={{ width: '100%', height: '100%' }}>
                   <g transform="translate(150, 110)">
                     {/* Concentric expanding sentiment ripple rings */}
                     <circle cx="0" cy="0" r="8" fill="none" stroke="#0028FF" strokeWidth="1.5">
@@ -1366,11 +1295,11 @@ export const ShowcaseView: React.FC<ShowcaseViewProps> = ({
                       { angle: 315, label: 'Happiness', val: 12, fill: '#0028FF' }
                     ].map((petal, idx) => {
                       const rad = (petal.angle * Math.PI) / 180;
-                      const petalDist = 38;
+                      const petalDist = 55;
                       const cx = Math.cos(rad) * petalDist;
                       const cy = Math.sin(rad) * petalDist;
                       const isHovered = hoveredPetal === idx;
-                      const r = (16 + (petal.val * 1.5)) * (isHovered ? 1.15 : 1);
+                      const r = (10 + (petal.val * 1.2)) * (isHovered ? 1.12 : 1);
                       const isHappiness = idx === 7;
 
                       return (
@@ -1459,118 +1388,293 @@ export const ShowcaseView: React.FC<ShowcaseViewProps> = ({
 
           {/* ROW 4: Attention capacity + Where intelligence comes from */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(480px, 1fr))', gap: '28px' }}>
-            {/* Attention capacity by tier */}
+            {/* CARD: Attention capacity by tier — Animated fill bars with hover lift + PRO particle stream */}
             <div style={{
               background: '#0D111E',
               borderRadius: '20px',
               padding: '32px',
               border: '1px solid rgba(255, 255, 255, 0.08)',
-              boxShadow: '0 8px 30px rgba(0, 0, 0, 0.3)'
+              boxShadow: '0 8px 30px rgba(0, 0, 0, 0.3)',
+              position: 'relative',
+              overflow: 'hidden'
             }}>
-              <div style={{ marginBottom: '20px' }}>
-                <h3 style={{ fontSize: '1.2rem', fontWeight: 800, margin: '0 0 6px', color: '#FFFFFF' }}>
-                  Attention capacity by tier
-                </h3>
-                <p style={{ fontSize: '0.75rem', color: '#94A3B8', margin: 0 }}>
-                  Q2 2026 · personal intelligence bandwidth
-                </p>
-              </div>
-
-              <div style={{ height: '180px', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-around', paddingBottom: '16px' }}>
-                {[
-                  { label: 'STARTER', val: '$182K', height: '80px', fill: '#334155' },
-                  { label: 'PRO (HACKER)', val: '$486K', height: '160px', fill: '#0028FF', isHero: true },
-                  { label: 'TEAM', val: '$391K', height: '125px', fill: '#64748B' },
-                  { label: 'ENT', val: '$274K', height: '95px', fill: '#94A3B8' }
-                ].map((bar, idx) => (
-                  <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-                    <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#FFFFFF', fontFamily: 'JetBrains Mono' }}>
-                      {bar.val}
-                    </span>
-                    <div style={{
-                      width: '48px',
-                      height: bar.height,
-                      borderRadius: '16px 16px 4px 4px',
-                      background: bar.fill
-                    }} />
-                    <span style={{ fontSize: '0.65rem', color: '#94A3B8', fontWeight: 700, letterSpacing: '0.05em' }}>
-                      {bar.label}
-                    </span>
-                  </div>
+              {/* Background grid lines */}
+              <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden', borderRadius: '20px' }}>
+                {[25, 50, 75].map((pct) => (
+                  <div key={pct} style={{
+                    position: 'absolute',
+                    bottom: `${68 + pct * 1.12}px`,
+                    left: '32px',
+                    right: '32px',
+                    height: '1px',
+                    background: 'rgba(255, 255, 255, 0.04)'
+                  }} />
                 ))}
               </div>
 
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
+                <div>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 800, margin: '0 0 6px', color: '#FFFFFF' }}>
+                    Attention capacity by tier
+                  </h3>
+                  <p style={{ fontSize: '0.75rem', color: '#94A3B8', margin: 0 }}>
+                    Q2 2026 · personal intelligence bandwidth
+                  </p>
+                </div>
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: '6px',
+                  fontSize: '0.68rem', fontFamily: 'JetBrains Mono', color: '#60A5FA',
+                  background: 'rgba(0, 40, 255, 0.10)',
+                  border: '1px solid rgba(0, 40, 255, 0.3)',
+                  padding: '3px 10px', borderRadius: '6px'
+                }}>
+                  <span className="anim-live-pulse" style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#0028FF', display: 'inline-block' }} />
+                  <span>LIVE BANDWIDTH</span>
+                </div>
+              </div>
+
+              <div style={{ height: '180px', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-around', position: 'relative', overflow: 'hidden' }}>
+                {[
+                  { label: 'STARTER', val: '$182K', pct: 50, fill: '#475569', isHero: false },
+                  { label: 'PRO', val: '$486K', pct: 100, fill: '#0028FF', isHero: true },
+                  { label: 'TEAM', val: '$391K', pct: 78, fill: '#64748B', isHero: false },
+                  { label: 'ENT', val: '$274K', pct: 59, fill: '#94A3B8', isHero: false }
+                ].map((bar, idx) => {
+                  const isHovered = hoveredStack === idx + 20;
+                  return (
+                    <div
+                      key={idx}
+                      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', cursor: 'pointer' }}
+                      onMouseEnter={() => setHoveredStack(idx + 20)}
+                      onMouseLeave={() => setHoveredStack(null)}
+                    >
+                      {/* Value label */}
+                      <span style={{
+                        fontSize: '0.82rem', fontWeight: 800,
+                        color: isHovered || bar.isHero ? '#FFFFFF' : '#94A3B8',
+                        fontFamily: 'JetBrains Mono',
+                        textShadow: isHovered || bar.isHero ? '0 0 10px rgba(0, 40, 255, 0.8)' : 'none',
+                        transition: 'all 0.2s ease'
+                      }}>
+                        {bar.val}
+                      </span>
+
+                      {/* Bar column */}
+                      <div style={{
+                        width: isHovered ? '56px' : bar.isHero ? '52px' : '48px',
+                        height: `${bar.pct * 1.1}px`,
+                        borderRadius: '12px 12px 4px 4px',
+                        background: isHovered
+                          ? '#0028FF'
+                          : bar.isHero
+                          ? 'linear-gradient(180deg, #60A5FA 0%, #0028FF 60%, #001AFF 100%)'
+                          : `linear-gradient(180deg, ${bar.fill}CC 0%, ${bar.fill} 100%)`,
+                        boxShadow: isHovered || bar.isHero
+                          ? '0 0 24px rgba(0, 40, 255, 0.6), inset 0 1px 0 rgba(255,255,255,0.2)'
+                          : 'inset 0 1px 0 rgba(255,255,255,0.08)',
+                        transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+                        position: 'relative',
+                        overflow: 'hidden'
+                      }}>
+                        {/* Shimmer scan line going up the bar */}
+                        <div style={{
+                          position: 'absolute',
+                          left: 0, right: 0,
+                          height: '2px',
+                          background: 'rgba(255, 255, 255, 0.5)',
+                          animation: bar.isHero || isHovered ? 'barScanUp 1.8s linear infinite' : undefined,
+                          borderRadius: '1px'
+                        }} />
+
+                        {/* PRO bar: rising particle stream */}
+                        {bar.isHero && [
+                          { left: '20%', delay: '0s', dur: '1.4s' },
+                          { left: '50%', delay: '0.5s', dur: '1.8s' },
+                          { left: '78%', delay: '0.9s', dur: '1.2s' }
+                        ].map((p, pi) => (
+                          <div
+                            key={pi}
+                            style={{
+                              position: 'absolute',
+                              bottom: '-4px',
+                              left: p.left,
+                              width: '3px',
+                              height: '3px',
+                              borderRadius: '50%',
+                              background: '#FFFFFF',
+                              boxShadow: '0 0 6px #60A5FA',
+                              animation: `particleRise ${p.dur} ease-out infinite`,
+                              animationDelay: p.delay,
+                              opacity: 0
+                            }}
+                          />
+                        ))}
+                      </div>
+
+                      {/* Tier label */}
+                      <span style={{
+                        fontSize: '0.62rem',
+                        color: isHovered || bar.isHero ? '#0028FF' : '#64748B',
+                        fontWeight: 700,
+                        letterSpacing: '0.06em',
+                        fontFamily: 'JetBrains Mono',
+                        transition: 'color 0.2s ease'
+                      }}>
+                        {bar.label}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+
               <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '14px', display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: '#94A3B8' }}>
-                <span>SHUBBY BARS // MONO DEMO</span>
-                <span>ALLOCATION</span>
+                <span>CAPACITY TIERS // MONO EDITORIAL</span>
+                <span style={{ color: '#0028FF', fontWeight: 700 }}>Q2 2026 · INTELLIGENCE BANDWIDTH</span>
               </div>
             </div>
 
-            {/* Where intelligence comes from (10x10 Dot Matrix) */}
+            {/* CARD: Where intelligence comes from — Animated dot matrix with scan wave + hover source highlight */}
             <div style={{
               background: '#0D111E',
               borderRadius: '20px',
               padding: '32px',
               border: '1px solid rgba(255, 255, 255, 0.08)',
-              boxShadow: '0 8px 30px rgba(0, 0, 0, 0.3)'
+              boxShadow: '0 8px 30px rgba(0, 0, 0, 0.3)',
+              position: 'relative',
+              overflow: 'hidden'
             }}>
-              <div style={{ marginBottom: '20px' }}>
-                <h3 style={{ fontSize: '1.2rem', fontWeight: 800, margin: '0 0 6px', color: '#FFFFFF' }}>
-                  Where intelligence comes from
-                </h3>
-                <p style={{ fontSize: '0.75rem', color: '#94A3B8', margin: 0 }}>
-                  Q2 2026 · every dot = 1% of raw ingested signals
-                </p>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
+                <div>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 800, margin: '0 0 6px', color: '#FFFFFF' }}>
+                    Where intelligence comes from
+                  </h3>
+                  <p style={{ fontSize: '0.75rem', color: '#94A3B8', margin: 0 }}>
+                    Q2 2026 · every dot = 1% of raw ingested signals
+                  </p>
+                </div>
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: '6px',
+                  fontSize: '0.68rem', fontFamily: 'JetBrains Mono',
+                  color: hoveredStack !== null && hoveredStack < 20 ? '#0028FF' : '#60A5FA',
+                  background: 'rgba(0, 40, 255, 0.10)',
+                  border: '1px solid rgba(0, 40, 255, 0.3)',
+                  padding: '3px 10px', borderRadius: '6px'
+                }}>
+                  <span className="anim-live-pulse" style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#0028FF', display: 'inline-block' }} />
+                  <span>{hoveredStack !== null && hoveredStack < 20 ? `SOURCE ${hoveredStack + 1} INSPECTED` : '100 SIGNAL PROVENANCE'}</span>
+                </div>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '28px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '24px' }}>
+                {/* Animated dot matrix */}
                 <div style={{
                   display: 'grid',
                   gridTemplateColumns: 'repeat(10, 1fr)',
-                  gap: '6px',
-                  width: '180px'
+                  gap: '5px',
+                  flexShrink: 0
                 }}>
                   {Array.from({ length: 100 }).map((_, idx) => {
-                    let dotColor = '#FFFFFF';
-                    if (idx >= 34 && idx < 61) dotColor = '#64748B';
-                    else if (idx >= 61 && idx < 79) dotColor = '#0028FF';
-                    else if (idx >= 79 && idx < 91) dotColor = '#334155';
-                    else if (idx >= 91) dotColor = '#1E293B';
+                    // Source group assignment
+                    let srcIdx = 0;
+                    if (idx >= 34 && idx < 61) srcIdx = 1;
+                    else if (idx >= 61 && idx < 79) srcIdx = 2;
+                    else if (idx >= 79 && idx < 91) srcIdx = 3;
+                    else if (idx >= 91) srcIdx = 4;
+
+                    const colors = ['#E2E8F0', '#64748B', '#0028FF', '#334155', '#1E293B'];
+                    const baseColor = colors[srcIdx];
+                    const isSourceHovered = hoveredStack === srcIdx;
+                    const delay = ((idx * 0.04) % 2.4).toFixed(2);
 
                     return (
                       <span
                         key={idx}
+                        onMouseEnter={() => setHoveredStack(srcIdx)}
+                        onMouseLeave={() => setHoveredStack(null)}
                         style={{
-                          width: '10px',
-                          height: '10px',
+                          width: '11px',
+                          height: '11px',
                           borderRadius: '50%',
-                          background: dotColor
+                          background: isSourceHovered ? '#0028FF' : baseColor,
+                          boxShadow: isSourceHovered ? '0 0 8px #0028FF' : 'none',
+                          cursor: 'pointer',
+                          animation: srcIdx === 2 ? `peakBeacon 2s ease-in-out infinite` : `dotGlimmer 3s ease-in-out infinite`,
+                          animationDelay: `${delay}s`,
+                          transition: 'background 0.2s ease, box-shadow 0.2s ease'
                         }}
                       />
                     );
                   })}
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {/* Source legend with animated progress bars */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', flex: 1 }}>
                   {[
-                    { label: 'HackerNews & Feeds', pct: '34%', color: '#FFFFFF' },
-                    { label: 'arXiv Preprints', pct: '27%', color: '#64748B' },
-                    { label: 'Direct Mentors & WhatsApp', pct: '18%', color: '#0028FF' },
-                    { label: 'GitHub MCP Repos', pct: '12%', color: '#334155' },
-                    { label: 'Security Advisories', pct: '9%', color: '#1E293B' }
-                  ].map((src, idx) => (
-                    <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: src.color }} />
-                      <span style={{ fontSize: '0.76rem', color: '#FFFFFF', fontWeight: 600 }}>{src.label}</span>
-                      <span style={{ fontSize: '0.76rem', color: '#94A3B8', fontFamily: 'JetBrains Mono', marginLeft: 'auto' }}>{src.pct}</span>
-                    </div>
-                  ))}
+                    { label: 'HackerNews & Feeds', pct: 34, color: '#E2E8F0' },
+                    { label: 'arXiv Preprints', pct: 27, color: '#64748B' },
+                    { label: 'Mentors & WhatsApp', pct: 18, color: '#0028FF' },
+                    { label: 'GitHub MCP Repos', pct: 12, color: '#475569' },
+                    { label: 'Security Advisories', pct: 9, color: '#334155' }
+                  ].map((src, idx) => {
+                    const isHov = hoveredStack === idx;
+                    return (
+                      <div
+                        key={idx}
+                        onMouseEnter={() => setHoveredStack(idx)}
+                        onMouseLeave={() => setHoveredStack(null)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                          <span style={{
+                            width: '7px', height: '7px', borderRadius: '50%',
+                            background: isHov ? '#0028FF' : src.color,
+                            boxShadow: isHov ? '0 0 8px #0028FF' : 'none',
+                            flexShrink: 0,
+                            transition: 'all 0.2s ease'
+                          }} />
+                          <span style={{
+                            fontSize: '0.73rem', fontWeight: isHov ? 700 : 600,
+                            color: isHov ? '#FFFFFF' : '#CBD5E1',
+                            flex: 1,
+                            transition: 'color 0.2s ease'
+                          }}>{src.label}</span>
+                          <span style={{
+                            fontSize: '0.72rem', color: isHov ? '#0028FF' : '#94A3B8',
+                            fontFamily: 'JetBrains Mono', fontWeight: 700,
+                            transition: 'color 0.2s ease'
+                          }}>{src.pct}%</span>
+                        </div>
+                        {/* Animated progress track */}
+                        <div style={{
+                          height: '3px',
+                          background: 'rgba(255,255,255,0.08)',
+                          borderRadius: '2px',
+                          overflow: 'hidden'
+                        }}>
+                          <div style={{
+                            height: '100%',
+                            width: `${src.pct * 2.94}%`,
+                            background: isHov
+                              ? 'linear-gradient(90deg, #0028FF, #60A5FA)'
+                              : src.color === '#0028FF'
+                              ? 'linear-gradient(90deg, #0028FF, #60A5FA)'
+                              : src.color,
+                            borderRadius: '2px',
+                            boxShadow: isHov ? '0 0 6px #0028FF' : 'none',
+                            animation: 'progressFill 1.4s ease-out both',
+                            animationDelay: `${idx * 0.12}s`,
+                            transition: 'background 0.2s ease'
+                          }} />
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
               <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '14px', marginTop: '20px', display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: '#94A3B8' }}>
                 <span>DOT MATRIX // 100 PROVENANCE PERCENTILES</span>
-                <span>ATTRIBUTION</span>
+                <span style={{ color: '#0028FF', fontWeight: 700 }}>ATTRIBUTION · HOVER TO FILTER</span>
               </div>
             </div>
           </div>
@@ -1583,153 +1687,256 @@ export const ShowcaseView: React.FC<ShowcaseViewProps> = ({
       <section style={{
         background: '#04060A',
         color: '#FFFFFF',
-        padding: '90px 32px',
-        borderTop: '1px solid rgba(255, 255, 255, 0.08)'
+        padding: '100px 32px',
+        borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+        position: 'relative',
+        overflow: 'hidden'
       }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
+        {/* Subtle animated background grid */}
+        <div style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          backgroundImage: 'linear-gradient(rgba(0,40,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,40,255,0.03) 1px, transparent 1px)',
+          backgroundSize: '60px 60px',
+          animation: 'gridDrift 18s linear infinite'
+        }} />
+
+        <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 1 }}>
           <span style={{
-            fontSize: '0.72rem',
-            letterSpacing: '0.15em',
-            textTransform: 'uppercase',
-            fontWeight: 800,
-            color: '#0028FF',
-            display: 'block',
-            marginBottom: '10px'
+            fontSize: '0.68rem', letterSpacing: '0.18em', textTransform: 'uppercase',
+            fontWeight: 800, color: '#0028FF', display: 'block', marginBottom: '12px',
+            fontFamily: 'JetBrains Mono'
           }}>
             THE 3-STAGE INTELLIGENCE LIFECYCLE
           </span>
           <h2 style={{ fontSize: 'clamp(2rem, 3.8vw, 3rem)', fontWeight: 900, letterSpacing: '-0.03em', margin: '0 0 16px' }}>
-            From Chaotic Noise to Decisive Focus
+            From Chaotic Noise to{' '}
+            <span style={{ color: '#0028FF', textShadow: '0 0 40px rgba(0,40,255,0.5)' }}>Decisive Focus</span>
           </h2>
-          <p style={{ fontSize: '0.95rem', color: '#94A3B8', maxWidth: '640px', margin: '0 auto 50px', lineHeight: 1.6 }}>
+          <p style={{ fontSize: '0.95rem', color: '#94A3B8', maxWidth: '600px', margin: '0 auto 64px', lineHeight: 1.65 }}>
             InfoLens replaces endless scrolling feeds with personalized cognitive triage. Here is how your intelligence operating system operates:
           </p>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '28px', textAlign: 'left' }}>
-            {/* Step 1 */}
-            <div style={{
-              background: '#0D111E',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              borderRadius: '20px',
-              padding: '32px'
-            }}>
-              <div style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '10px',
-                background: '#0028FF',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#FFFFFF',
-                fontWeight: 900,
-                fontSize: '1.1rem',
-                marginBottom: '18px'
-              }}>
-                1
-              </div>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '10px', color: '#FFFFFF' }}>
-                Identity Calibration
-              </h3>
-              <p style={{ fontSize: '0.84rem', color: '#94A3B8', lineHeight: 1.6, marginBottom: '18px' }}>
-                Define your active archetype (Student Hacker, AI Researcher, Tech Founder). Set mathematical interest weights and track specific individuals or organizations.
-              </p>
-              <div style={{ fontSize: '0.72rem', color: '#0028FF', fontWeight: 700 }}>
-                Dynamic Vector Calibration →
-              </div>
-            </div>
+          {/* Step cards + connectors */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '0', textAlign: 'left', position: 'relative' }}>
 
-            {/* Step 2 */}
-            <div style={{
-              background: '#0D111E',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              borderRadius: '20px',
-              padding: '32px'
-            }}>
-              <div style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '10px',
-                background: '#0028FF',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#FFFFFF',
-                fontWeight: 900,
-                fontSize: '1.1rem',
-                marginBottom: '18px'
-              }}>
-                2
-              </div>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '10px', color: '#FFFFFF' }}>
-                Graph Synthesis & Ingest
-              </h3>
-              <p style={{ fontSize: '0.84rem', color: '#94A3B8', lineHeight: 1.6, marginBottom: '18px' }}>
-                Raw signals from Slack, arXiv, GitHub, and email flow into a 10-stage pipeline: deduplication, entity extraction, cluster formation, and Neo4j edge construction.
-              </p>
-              <div style={{ fontSize: '0.72rem', color: '#0028FF', fontWeight: 700 }}>
-                100% Provenance Preservation →
-              </div>
-            </div>
+            {[
+              {
+                step: 1,
+                title: 'Identity Calibration',
+                body: 'Define your active archetype (Student Hacker, AI Researcher, Tech Founder). Set mathematical interest weights and track specific individuals or organizations.',
+                cta: 'Dynamic Vector Calibration',
+                accent: '#0028FF',
+                icon: (
+                  <svg viewBox="0 0 60 60" width="60" height="60">
+                    {/* Concentric calibration rings */}
+                    <circle cx="30" cy="30" r="26" fill="none" stroke="rgba(0,40,255,0.18)" strokeWidth="1" />
+                    <circle cx="30" cy="30" r="18" fill="none" stroke="rgba(0,40,255,0.28)" strokeWidth="1" />
+                    <circle cx="30" cy="30" r="10" fill="none" stroke="#0028FF" strokeWidth="1.2" />
+                    {/* Rotating cursor */}
+                    <g style={{ animation: 'orbitalRotate 4s linear infinite', transformOrigin: '30px 30px' }}>
+                      <circle cx="30" cy="4" r="3" fill="#0028FF" />
+                    </g>
+                    {/* Cross-hair */}
+                    <line x1="30" y1="20" x2="30" y2="24" stroke="#0028FF" strokeWidth="1.5" />
+                    <line x1="30" y1="36" x2="30" y2="40" stroke="#0028FF" strokeWidth="1.5" />
+                    <line x1="20" y1="30" x2="24" y2="30" stroke="#0028FF" strokeWidth="1.5" />
+                    <line x1="36" y1="30" x2="40" y2="30" stroke="#0028FF" strokeWidth="1.5" />
+                    <circle cx="30" cy="30" r="3" fill="#FFFFFF">
+                      <animate attributeName="r" values="2.5;4;2.5" dur="2s" repeatCount="indefinite" />
+                      <animate attributeName="opacity" values="1;0.5;1" dur="2s" repeatCount="indefinite" />
+                    </circle>
+                  </svg>
+                )
+              },
+              {
+                step: 2,
+                title: 'Graph Synthesis & Ingest',
+                body: 'Raw signals from Slack, arXiv, GitHub, and email flow into a 10-stage pipeline: deduplication, entity extraction, cluster formation, and Neo4j edge construction.',
+                cta: '100% Provenance Preservation',
+                accent: '#0028FF',
+                icon: (
+                  <svg viewBox="0 0 60 60" width="60" height="60">
+                    {/* Node graph */}
+                    <circle cx="30" cy="30" r="5" fill="#0028FF"><animate attributeName="r" values="4;6;4" dur="2.4s" repeatCount="indefinite" /></circle>
+                    {[{a:300, r:20},{a:180, r:20},{a:60, r:20},{a:0, r:20}].map(({a,r},i)=>{
+                      const rad = a*Math.PI/180;
+                      const nx = 30+Math.cos(rad)*r, ny=30+Math.sin(rad)*r;
+                      return <g key={i}>
+                        <line x1="30" y1="30" x2={nx} y2={ny} stroke="rgba(0,40,255,0.4)" strokeWidth="1"/>
+                        <circle cx={nx} cy={ny} r="3.5" fill="#60A5FA"><animate attributeName="opacity" values="0.5;1;0.5" dur={`${1.4+i*0.3}s`} repeatCount="indefinite"/></circle>
+                      </g>;
+                    })}
+                    {/* Data packet */}
+                    <circle r="2" fill="#FFFFFF" style={{filter:'drop-shadow(0 0 4px #0028FF)'}}>
+                      <animateMotion dur="2.2s" repeatCount="indefinite" path="M30,30 L50,30 L30,30" />
+                    </circle>
+                  </svg>
+                )
+              },
+              {
+                step: 3,
+                title: 'Decisive Attention OS',
+                body: 'TimeSpot chronometers track your deadline horizons. Clusters are scored mathematically against your preferences. Non-urgent noise is silently batched for quiet hours.',
+                cta: 'Zero Fatigue Digest',
+                accent: '#0028FF',
+                icon: (
+                  <svg viewBox="0 0 60 60" width="60" height="60">
+                    {/* Attention bars */}
+                    {[{h:40,x:8},{h:28,x:18},{h:48,x:28},{h:20,x:38},{h:36,x:48}].map(({h,x},i)=>(
+                      <rect key={i} x={x} y={60-h-6} width="7" height={h} rx="3"
+                        fill={i===2?'#0028FF':'#334155'}
+                        style={{filter:i===2?'drop-shadow(0 0 6px #0028FF)':'none'}}>
+                        <animate attributeName="height" values={`${h};${h*1.15};${h}`} dur={`${1.8+i*0.25}s`} repeatCount="indefinite"/>
+                        <animate attributeName="y" values={`${60-h-6};${60-h*1.15-6};${60-h-6}`} dur={`${1.8+i*0.25}s`} repeatCount="indefinite"/>
+                      </rect>
+                    ))}
+                    {/* Focus dot at peak */}
+                    <circle cx="31.5" cy="11" r="3" fill="#FFFFFF" style={{filter:'drop-shadow(0 0 6px #0028FF)'}}>
+                      <animate attributeName="opacity" values="1;0.3;1" dur="1.6s" repeatCount="indefinite"/>
+                    </circle>
+                  </svg>
+                )
+              }
+            ].map((card, idx) => (
+              <div key={idx} style={{ position: 'relative', padding: '0 16px' }}>
 
-            {/* Step 3 */}
-            <div style={{
-              background: '#0D111E',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              borderRadius: '20px',
-              padding: '32px'
-            }}>
-              <div style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '10px',
-                background: '#0028FF',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#FFFFFF',
-                fontWeight: 900,
-                fontSize: '1.1rem',
-                marginBottom: '18px'
-              }}>
-                3
+                {/* Connector line + animated data dot between cards */}
+                {idx < 2 && (
+                  <div style={{
+                    position: 'absolute', top: '52px', right: '-4px', zIndex: 10,
+                    display: 'flex', alignItems: 'center'
+                  }}>
+                    <div style={{ width: '32px', height: '1px', background: 'linear-gradient(90deg, rgba(0,40,255,0.4), rgba(0,40,255,0.8))' }} />
+                    <span style={{
+                      width: '6px', height: '6px', borderRadius: '50%',
+                      background: '#0028FF', boxShadow: '0 0 8px #0028FF',
+                      animation: 'peakBeacon 1.4s ease-in-out infinite',
+                      animationDelay: `${idx * 0.4}s`
+                    }} />
+                  </div>
+                )}
+
+                <div
+                  style={{
+                    background: '#0D111E',
+                    border: '1px solid rgba(255,255,255,0.07)',
+                    borderRadius: '20px',
+                    padding: '32px',
+                    height: '100%',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    transition: 'border-color 0.3s ease, transform 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s ease',
+                    cursor: 'default'
+                  }}
+                  onMouseEnter={e => {
+                    (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(0,40,255,0.55)';
+                    (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-6px)';
+                    (e.currentTarget as HTMLDivElement).style.boxShadow = '0 20px 60px rgba(0,40,255,0.18)';
+                  }}
+                  onMouseLeave={e => {
+                    (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(255,255,255,0.07)';
+                    (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)';
+                    (e.currentTarget as HTMLDivElement).style.boxShadow = 'none';
+                  }}
+                >
+                  {/* Radial glow in corner */}
+                  <div style={{
+                    position: 'absolute', top: '-20px', right: '-20px', width: '120px', height: '120px',
+                    background: 'radial-gradient(circle, rgba(0,40,255,0.12) 0%, transparent 70%)',
+                    pointerEvents: 'none'
+                  }} />
+
+                  {/* Step badge */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '20px' }}>
+                    <div style={{ position: 'relative', width: '44px', height: '44px', flexShrink: 0 }}>
+                      {/* Sonar ring behind badge */}
+                      <div style={{
+                        position: 'absolute', inset: '-6px', borderRadius: '50%',
+                        border: '1px solid rgba(0,40,255,0.35)',
+                        animation: 'peakBeacon 2.4s ease-in-out infinite',
+                        animationDelay: `${idx * 0.5}s`
+                      }} />
+                      <div style={{
+                        width: '44px', height: '44px', borderRadius: '12px',
+                        background: 'linear-gradient(135deg, #0028FF 0%, #3B5BFA 100%)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        color: '#FFFFFF', fontWeight: 900, fontSize: '1.2rem',
+                        boxShadow: '0 0 16px rgba(0,40,255,0.5)',
+                        fontFamily: 'JetBrains Mono'
+                      }}>
+                        {card.step}
+                      </div>
+                    </div>
+                    {/* Mini icon SVG */}
+                    <div style={{ opacity: 0.9 }}>{card.icon}</div>
+                  </div>
+
+                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, marginBottom: '10px', color: '#FFFFFF', letterSpacing: '-0.02em' }}>
+                    {card.title}
+                  </h3>
+                  <p style={{ fontSize: '0.83rem', color: '#94A3B8', lineHeight: 1.65, marginBottom: '20px' }}>
+                    {card.body}
+                  </p>
+
+                  {/* CTA link with arrow */}
+                  <div style={{
+                    display: 'inline-flex', alignItems: 'center', gap: '6px',
+                    fontSize: '0.72rem', color: '#0028FF', fontWeight: 700,
+                    fontFamily: 'JetBrains Mono', letterSpacing: '0.04em',
+                    borderBottom: '1px solid rgba(0,40,255,0.3)', paddingBottom: '2px',
+                    transition: 'color 0.2s, border-color 0.2s'
+                  }}>
+                    {card.cta} →
+                  </div>
+                </div>
               </div>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '10px', color: '#FFFFFF' }}>
-                Decisive Attention OS
-              </h3>
-              <p style={{ fontSize: '0.84rem', color: '#94A3B8', lineHeight: 1.6, marginBottom: '18px' }}>
-                TimeSpot chronometers track your deadline horizons. Clusters are scored mathematically against your preferences. Non-urgent noise is silently batched for quiet hours.
-              </p>
-              <div style={{ fontSize: '0.72rem', color: '#0028FF', fontWeight: 700 }}>
-                Zero Fatigue Digest →
-              </div>
-            </div>
+            ))}
           </div>
 
           {/* Bottom Conversion Banner */}
           <div style={{
             marginTop: '70px',
-            background: 'linear-gradient(135deg, rgba(0, 40, 255, 0.18) 0%, rgba(13, 17, 30, 0.95) 100%)',
-            border: '1px solid #0028FF',
+            background: 'linear-gradient(135deg, rgba(0,40,255,0.15) 0%, rgba(13,17,30,0.98) 100%)',
+            border: '1px solid rgba(0,40,255,0.45)',
             borderRadius: '22px',
-            padding: '44px',
+            padding: '44px 48px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             flexWrap: 'wrap',
             gap: '24px',
-            textAlign: 'left'
+            textAlign: 'left',
+            position: 'relative',
+            overflow: 'hidden'
           }}>
-            <div>
-              <h3 style={{ fontSize: '1.7rem', fontWeight: 900, margin: '0 0 8px', color: '#FFFFFF' }}>
+            {/* Animated scan line */}
+            <div style={{
+              position: 'absolute', top: 0, left: '-100%', right: 0, height: '1px',
+              background: 'linear-gradient(90deg, transparent, rgba(0,40,255,0.8), transparent)',
+              animation: 'barScanUp 3s linear infinite',
+              transform: 'rotate(90deg)',
+              transformOrigin: 'top right'
+            }} />
+            {/* Corner glow */}
+            <div style={{
+              position: 'absolute', top: '-30px', left: '-30px', width: '200px', height: '200px',
+              background: 'radial-gradient(circle, rgba(0,40,255,0.15) 0%, transparent 70%)',
+              pointerEvents: 'none'
+            }} />
+
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              <div style={{ fontSize: '0.66rem', color: '#0028FF', fontFamily: 'JetBrains Mono', fontWeight: 700, letterSpacing: '0.15em', marginBottom: '8px' }}>
+                ● READY TO DEPLOY
+              </div>
+              <h3 style={{ fontSize: '1.7rem', fontWeight: 900, margin: '0 0 8px', color: '#FFFFFF', letterSpacing: '-0.02em' }}>
                 Ready to reclaim your cognitive bandwidth?
               </h3>
-              <p style={{ fontSize: '0.88rem', color: '#CBD5E1', margin: 0 }}>
+              <p style={{ fontSize: '0.88rem', color: '#94A3B8', margin: 0 }}>
                 Calibrate your custom profile or test the live prototype with 50 pre-indexed records.
               </p>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', position: 'relative', zIndex: 1 }}>
               <button
                 onClick={onStartOnboarding}
                 style={{
@@ -1737,15 +1944,18 @@ export const ShowcaseView: React.FC<ShowcaseViewProps> = ({
                   color: '#FFFFFF',
                   border: 'none',
                   borderRadius: '999px',
-                  padding: '13px 26px',
+                  padding: '14px 28px',
                   fontSize: '0.88rem',
                   fontWeight: 700,
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '8px',
-                  boxShadow: '0 0 24px rgba(0, 40, 255, 0.65)'
+                  boxShadow: '0 0 32px rgba(0,40,255,0.7)',
+                  transition: 'transform 0.2s ease, box-shadow 0.2s ease'
                 }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 0 48px rgba(0,40,255,0.9)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 0 32px rgba(0,40,255,0.7)'; }}
               >
                 <span>Calibrate My Lens</span>
                 <ArrowRight size={15} />
@@ -1753,15 +1963,18 @@ export const ShowcaseView: React.FC<ShowcaseViewProps> = ({
               <button
                 onClick={() => onEnterApp('dashboard')}
                 style={{
-                  background: 'rgba(255, 255, 255, 0.08)',
+                  background: 'rgba(255,255,255,0.06)',
                   color: '#FFFFFF',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  border: '1px solid rgba(255,255,255,0.18)',
                   borderRadius: '999px',
-                  padding: '13px 22px',
+                  padding: '14px 24px',
                   fontSize: '0.88rem',
                   fontWeight: 600,
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  transition: 'background 0.2s ease, border-color 0.2s ease'
                 }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.12)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.35)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.18)'; }}
               >
                 Enter Operating System
               </button>
@@ -1769,6 +1982,7 @@ export const ShowcaseView: React.FC<ShowcaseViewProps> = ({
           </div>
         </div>
       </section>
+
 
       {/* ============================================================
           SHOWCASE FOOTER (Unified Obsidian Palette)

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { UserProfile, ConsumptionStyle, UserType } from '../types';
 import {
   Sparkles, Check, ArrowRight, ShieldCheck, User, Bell, Sliders,
@@ -120,35 +120,48 @@ export const AuthOnboardingFlow: React.FC<AuthOnboardingFlowProps> = ({
       zIndex: 2000,
       background: 'var(--bg-primary)',
       display: 'flex',
-      alignItems: 'center',
+      alignItems: 'stretch',
       justifyContent: 'center',
-      padding: '24px',
-      overflowY: 'auto'
+      overflow: 'hidden'
     }}>
-      {/* Outer Editorial Container */}
+      {/* Outer Editorial Container — full viewport */}
       <div style={{
         width: '100%',
-        maxWidth: '1100px',
-        minHeight: '640px',
-        background: '#ffffff',
+        maxWidth: '100%',
+        background: '#04060A', // Dark background for the whole modal
         color: '#05070d',
-        borderRadius: '24px',
-        boxShadow: '0 24px 64px rgba(0, 0, 0, 0.8), 0 0 32px rgba(0, 40, 255, 0.25)',
         display: 'grid',
-        gridTemplateColumns: step === 1 ? '1.1fr 1fr' : '1fr',
+        gridTemplateColumns: step === 1 ? '50% 50%' : '1fr', // 50/50 split on step 1
         overflow: 'hidden',
-        border: '1px solid rgba(0, 0, 0, 0.12)'
+        border: 'none',
+        position: 'relative'
       }}>
         {/* LEFT PANE: Form & Step Flow */}
         <div style={{
-          padding: '44px 48px',
+          position: 'relative',
+          zIndex: 10,
           display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          background: '#ffffff'
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '2vw',
         }}>
-          {/* Top Header / Brand */}
-          <div>
+          {/* Floating Card */}
+          <div style={{
+            width: '100%',
+            maxWidth: '520px',
+            height: '85vh',
+            padding: '44px 48px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            background: '#ffffff',
+            borderRadius: '24px',
+            boxShadow: '0 32px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1)',
+            overflowY: 'auto',
+            animation: 'floatGentle 6s ease-in-out infinite'
+          }}>
+            {/* Top Header / Brand */}
+            <div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <div style={{
@@ -679,50 +692,192 @@ export const AuthOnboardingFlow: React.FC<AuthOnboardingFlowProps> = ({
             )}
           </div>
         </div>
+        </div>
 
-        {/* RIGHT PANE: MUSEUM-GRADE DITHERED LANDSCAPE ARTWORK (IMAGE 1 STYLE) */}
+        {/* RIGHT PANE: ANIMATED ASCII ART TERMINAL */}
         {step === 1 && (
           <div style={{
             position: 'relative',
-            background: '#000000',
+            background: '#04060A',
             overflow: 'hidden',
             display: 'flex',
             flexDirection: 'column',
-            justifyContent: 'flex-end',
-            padding: '32px'
+            justifyContent: 'center',
+            alignItems: 'center',
+            alignSelf: 'stretch',
+            minHeight: '100%',
+            fontFamily: "'JetBrains Mono', 'Courier New', monospace"
           }}>
-            <img
-              src="/art/dither_zen_garden.jpg"
-              alt="Architectural Dithered Art"
-              style={{
-                position: 'absolute',
-                inset: 0,
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                opacity: 0.95
-              }}
-            />
-            {/* Subtle Gradient Overlay */}
+
+            {/* Matrix rain background columns */}
+            <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
+              {[
+                { left: '4%',  chars: '01∞◈░▓∴■', dur: '3.2s', delay: '0s',    opacity: 0.13 },
+                { left: '8%',  chars: '01□⊕≡≈░◉', dur: '4.8s', delay: '2.1s',  opacity: 0.08 },
+                { left: '11%', chars: 'アイウ01□◉⊕', dur: '2.6s', delay: '0.4s',  opacity: 0.10 },
+                { left: '18%', chars: '░█▓01≈∵◈■', dur: '4.1s', delay: '1.1s',  opacity: 0.15 },
+                { left: '22%', chars: 'クケ01■⊕◉≡', dur: '3.3s', delay: '0.8s',  opacity: 0.09 },
+                { left: '26%', chars: '01⬡⊗∷∞◉░',  dur: '2.9s', delay: '0.7s',  opacity: 0.09 },
+                { left: '34%', chars: 'エオ01▓■◈∴', dur: '3.7s', delay: '0.2s',  opacity: 0.12 },
+                { left: '38%', chars: '01∴∷◈□░▓', dur: '4.5s', delay: '1.4s',  opacity: 0.08 },
+                { left: '43%', chars: '01□⊕≡≈░◉▓', dur: '2.4s', delay: '1.5s',  opacity: 0.14 },
+                { left: '48%', chars: '01▓░◈⬡∞∵', dur: '3.6s', delay: '0.5s',  opacity: 0.11 },
+                { left: '52%', chars: 'カキ01∞■∵◈', dur: '3.5s', delay: '0.9s',  opacity: 0.10 },
+                { left: '61%', chars: '░▓01⬢◉⊗≈■', dur: '2.8s', delay: '0.3s',  opacity: 0.13 },
+                { left: '65%', chars: '01∞◈░▓∴■', dur: '4.2s', delay: '1.9s',  opacity: 0.07 },
+                { left: '70%', chars: '01∴∷◈□░▓∞', dur: '4.3s', delay: '1.8s',  opacity: 0.11 },
+                { left: '78%', chars: 'クケ01■⊕◉≡', dur: '3.1s', delay: '0.6s',  opacity: 0.15 },
+                { left: '82%', chars: 'アイウ01□◉', dur: '2.7s', delay: '1.3s',  opacity: 0.10 },
+                { left: '86%', chars: '01▓░◈⬡∞∵■', dur: '2.5s', delay: '1.2s',  opacity: 0.09 },
+                { left: '93%', chars: 'コ01□⊗≈■◉░', dur: '3.9s', delay: '0.1s',  opacity: 0.12 },
+              ].map((col, i) => (
+                <div key={i} style={{
+                  position: 'absolute',
+                  top: '-120%',
+                  left: col.left,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  fontSize: '0.65rem',
+                  lineHeight: '1.6',
+                  color: '#0028FF',
+                  opacity: col.opacity,
+                  animation: `matrixRain ${col.dur} linear infinite`,
+                  animationDelay: col.delay,
+                  userSelect: 'none',
+                  letterSpacing: '0.05em'
+                }}>
+                  {col.chars.repeat(40).split('').map((ch, j) => (
+                    <span key={j} style={{ opacity: j % 7 === 0 ? 1 : 0.5 }}>{ch}</span>
+                  ))}
+                </div>
+              ))}
+            </div>
+
+            {/* Scanline CRT overlay */}
             <div style={{
-              position: 'absolute',
-              inset: 0,
-              background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.1) 60%, transparent 100%)',
-              pointerEvents: 'none'
+              position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1,
+              background: 'repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.06) 3px, rgba(0,0,0,0.06) 4px)'
             }} />
 
-            {/* Art Project Caption */}
-            <div style={{ position: 'relative', zIndex: 1, color: '#ffffff' }}>
-              <div className="font-serif" style={{ fontSize: '0.72rem', letterSpacing: '0.18em', color: '#0028ff', textTransform: 'uppercase', fontWeight: 700 }}>
-                ✦ ATLAS NO.252 // COGNITIVE HARMONY
-              </div>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#ffffff', marginTop: '4px', lineHeight: 1.3 }}>
-                A Quiet Mind in an Age of Information Storms.
-              </h3>
-              <p style={{ fontSize: '0.75rem', color: '#cbd5e1', marginTop: '4px', lineHeight: 1.5 }}>
-                Filter ambient noise, corroborate provenance, and protect your precious attention.
-              </p>
+            {/* Radial vignette */}
+            <div style={{
+              position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1,
+              background: 'radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.7) 100%)'
+            }} />
+
+            {/* Horizontal scanning laser */}
+            <div style={{
+              position: 'absolute',
+              top: 0, bottom: 0, left: '-10%',
+              width: '4px',
+              background: '#0028FF',
+              boxShadow: '0 0 20px 4px #0028FF, 0 0 40px 10px #60A5FA',
+              zIndex: 3,
+              pointerEvents: 'none',
+              animation: 'scannerSweep 8s ease-in-out infinite alternate',
+              opacity: 0.6
+            }} />
+
+            {/* SVG Background Radar */}
+            <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1, pointerEvents: 'none', opacity: 0.28 }}>
+              <svg width="600" height="600" viewBox="0 0 600 600">
+                <g style={{ animation: 'orbitalRotate 40s linear infinite', transformOrigin: '300px 300px' }}>
+                  <circle cx="300" cy="300" r="280" fill="none" stroke="#0028FF" strokeWidth="1" strokeDasharray="2 18" />
+                  <circle cx="300" cy="300" r="220" fill="none" stroke="#0028FF" strokeWidth="1.5" strokeDasharray="10 30" />
+                  <circle cx="300" cy="300" r="180" fill="none" stroke="#60A5FA" strokeWidth="1" strokeDasharray="40 80" />
+                </g>
+                <g style={{ animation: 'orbitalRotate 25s linear infinite reverse', transformOrigin: '300px 300px' }}>
+                  <circle cx="300" cy="300" r="130" fill="none" stroke="#0028FF" strokeWidth="2" strokeDasharray="15 15" />
+                  <polygon points="300,180 404,240 404,360 300,420 196,360 196,240" fill="none" stroke="#60A5FA" strokeWidth="1" opacity="0.5" />
+                </g>
+                <g style={{ animation: 'orbitalRotate 12s linear infinite', transformOrigin: '300px 300px' }}>
+                  <polygon points="300,220 369,260 369,340 300,380 231,340 231,260" fill="none" stroke="#0028FF" strokeWidth="1.5" strokeDasharray="5 15" />
+                </g>
+                {/* Crosshairs */}
+                <path d="M 300 20 L 300 580 M 20 300 L 580 300" stroke="#0028FF" strokeWidth="1" opacity="0.4" />
+                <path d="M 300 300 L 520 80" stroke="#60A5FA" strokeWidth="3" style={{ transformOrigin: '300px 300px', animation: 'orbitalRotate 4s linear infinite' }} />
+                {/* Center glow */}
+                <circle cx="300" cy="300" r="12" fill="#0028FF" style={{ filter: 'blur(8px)', animation: 'pulse 2s infinite' }} />
+                
+                {/* Corner Brackets */}
+                <path d="M 50 100 L 50 50 L 100 50" fill="none" stroke="#0028FF" strokeWidth="2" opacity="0.5" />
+                <path d="M 550 100 L 550 50 L 500 50" fill="none" stroke="#0028FF" strokeWidth="2" opacity="0.5" />
+                <path d="M 50 500 L 50 550 L 100 550" fill="none" stroke="#0028FF" strokeWidth="2" opacity="0.5" />
+                <path d="M 550 500 L 550 550 L 500 550" fill="none" stroke="#0028FF" strokeWidth="2" opacity="0.5" />
+              </svg>
             </div>
+
+            {/* Central ASCII diagram */}
+            <div style={{ position: 'relative', zIndex: 2, padding: '24px', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+
+              <pre style={{
+                fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+                fontSize: '0.66rem',
+                lineHeight: 1.45,
+                color: '#475569',
+                margin: 0,
+                userSelect: 'none',
+                display: 'inline-block',
+                textAlign: 'left',
+                letterSpacing: '0.04em'
+              }}>
+{`┌──────────────────────────────────────────────────────────────┐
+│ INFOLENS KERNEL // v9.4.2                     [  `}<span style={{ color: '#0028FF', textShadow: '0 0 10px #0028FF' }}>ONLINE</span>{`  ] │
+├──────────────────────────────────────────────────────────────┤
+│                                                              │
+│  [ `}<span style={{ color: '#FFFFFF' }}>GLOBAL INGEST</span>{` ]                                           │
+│  `}<span style={{ color: '#0028FF', textShadow: '0 0 8px #0028FF' }}>#######################################</span>{`...........  78%     │
+│                                                              │
+│         `}<span style={{ color: '#60A5FA' }}>+</span>{` -------- `}<span style={{ color: '#0028FF', animation: 'peakBeacon 2s infinite' }}>*</span>{` -------- `}<span style={{ color: '#60A5FA' }}>+</span>{`         [ `}<span style={{ color: '#FFFFFF' }}>METRICS</span>{` ]            │
+│         | \\        |        / |         > FOCUS : `}<span style={{ color: '#FFFFFF' }}>94.2%</span>{`        │
+│         |   \\      |      /   |         > NOISE : 12,400       │
+│         `}<span style={{ color: '#0028FF', animation: 'peakBeacon 3s infinite' }}>*</span>{` ---- `}<span style={{ color: '#0028FF', textShadow: '0 0 14px #0028FF' }}>[ CORE ]</span>{` ----- `}<span style={{ color: '#0028FF', animation: 'peakBeacon 2.5s infinite' }}>*</span>{`         > SPAN  : 3 hrs        │
+│         |   /      |      \\   |                                │
+│         | /        |        \\ |         [ `}<span style={{ color: '#FFFFFF' }}>PIPELINE</span>{` ]           │
+│         `}<span style={{ color: '#60A5FA' }}>+</span>{` -------- `}<span style={{ color: '#60A5FA' }}>+</span>{` -------- `}<span style={{ color: '#60A5FA' }}>+</span>{`         > GRAPH SYNTH          │
+│                                         > SEMANTIC EDGE        │
+│                                                              │
+│  [ `}<span style={{ color: '#FFFFFF' }}>ACTIVE STREAMS</span>{` ]                                          │
+│  > arxiv.org/cs.ai  .......................... [ `}<span style={{ color: '#60A5FA', animation: 'pulse 2s infinite' }}>SYNCING</span>{` ] │
+│  > github.com/mcp   .......................... [   `}<span style={{ color: '#0028FF', textShadow: '0 0 8px #0028FF' }}>OK</span>{`    ] │
+│  > slack/eng-leads  .......................... [   `}<span style={{ color: '#0028FF', textShadow: '0 0 8px #0028FF' }}>OK</span>{`    ] │
+│                                                              │
+├──────────────────────────────────────────────────────────────┤
+│ TRACE: `}<span style={{ color: '#0028FF' }}>0x4F 0x92 0xAA 0x11 0xBB 0x09 0x4F 0x92 0xAA 0x1A</span>{`    │
+└──────────────────────────────────────────────────────────────┘`}
+              </pre>
+
+              {/* Blinking cursor at the end */}
+              <div style={{ marginTop: '12px', textAlign: 'left', width: '100%', maxWidth: '380px', paddingLeft: '8px' }}>
+                <span style={{ fontSize: '0.62rem', color: '#60A5FA', fontFamily: "'JetBrains Mono', monospace" }}>{`> AWAITING DIRECTIVE`}</span>
+                <span style={{
+                  display: 'inline-block',
+                  width: '7px', height: '11px',
+                  background: '#0028FF',
+                  marginLeft: '6px',
+                  verticalAlign: 'middle',
+                  animation: 'peakBeacon 0.9s step-end infinite',
+                  boxShadow: '0 0 10px rgba(0,40,255,0.9)'
+                }} />
+              </div>
+            </div>
+
+              {/* Caption */}
+              <div style={{ marginTop: '28px', borderTop: '1px solid rgba(0,40,255,0.2)', paddingTop: '20px' }}>
+                <div style={{
+                  fontSize: '0.62rem', letterSpacing: '0.2em',
+                  color: '#0028FF', fontWeight: 700, marginBottom: '8px'
+                }}>
+                  ✦ ATLAS NO.252  //  COGNITIVE HARMONY
+                </div>
+                <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#FFFFFF', lineHeight: 1.3 }}>
+                  A Quiet Mind in an Age of<br />Information Storms.
+                </div>
+                <div style={{ fontSize: '0.72rem', color: '#475569', marginTop: '6px', lineHeight: 1.6 }}>
+                  Filter ambient noise · corroborate provenance<br />
+                  · protect your precious attention.
+                </div>
+              </div>
           </div>
         )}
       </div>

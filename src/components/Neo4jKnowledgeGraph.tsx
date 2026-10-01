@@ -280,8 +280,7 @@ export const Neo4jKnowledgeGraph: React.FC<Neo4jKnowledgeGraphProps> = ({
   const visibleNodeIds = useMemo(() => new Set(visibleNodes.map(n => n.id)), [visibleNodes]);
 
   // ============================================================
-  // CANVAS RENDER LOOP (Exact match to Reference Image 1)
-  // Warm Off-White / Bone Canvas (#F4F4F0) with Pitch Charcoal Nodes
+  // CANVAS RENDER LOOP
   // ============================================================
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -289,25 +288,41 @@ export const Neo4jKnowledgeGraph: React.FC<Neo4jKnowledgeGraphProps> = ({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const dpr = window.devicePixelRatio || 1;
-    const width = 960;
-    const height = 640;
-    canvas.width = width * dpr;
-    canvas.height = height * dpr;
-    ctx.scale(dpr, dpr);
-
     let animationFrameId: number;
     let t = 0;
+    
+    // Manage dynamic size
+    let logicalWidth = 960;
+    let logicalHeight = 640;
+
+    const handleResize = () => {
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      
+      logicalWidth = rect.width;
+      logicalHeight = rect.height;
+
+      canvas.width = Math.floor(logicalWidth * dpr);
+      canvas.height = Math.floor(logicalHeight * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+
+    handleResize();
+    const resizeObserver = new ResizeObserver(() => handleResize());
+    resizeObserver.observe(canvas);
 
     const render = () => {
       t += 0.02;
 
       // Deep Obsidian Background matching single color theme (#060810)
       ctx.fillStyle = "#060810";
-      ctx.fillRect(0, 0, width, height);
+      ctx.fillRect(0, 0, logicalWidth, logicalHeight);
 
       ctx.save();
-      ctx.translate(pan.x, pan.y);
+      const offsetX = (logicalWidth - 960) / 2;
+      const offsetY = (logicalHeight - 640) / 2;
+      ctx.translate(pan.x + offsetX, pan.y + offsetY);
       ctx.scale(zoom, zoom);
 
       // Faint atmospheric constellation circles
@@ -325,7 +340,7 @@ export const Neo4jKnowledgeGraph: React.FC<Neo4jKnowledgeGraphProps> = ({
         ctx.fill();
       });
 
-      // 1. Draw Edges (Delicate Hairline Connectors with moving data packets)
+      // 1. Draw Edges (Solid Cybernetic Connectors with laser packets)
       edges.forEach((edge, idx) => {
         const na = nodeMap.get(edge.source);
         const nb = nodeMap.get(edge.target);
@@ -334,31 +349,38 @@ export const Neo4jKnowledgeGraph: React.FC<Neo4jKnowledgeGraphProps> = ({
 
         const isConnected = selectedNode && (edge.source === selectedNode.id || edge.target === selectedNode.id);
 
+        // Solid smooth track
         ctx.beginPath();
         ctx.moveTo(na.x, na.y);
         ctx.lineTo(nb.x, nb.y);
 
         if (isConnected) {
-          ctx.strokeStyle = "#0028FF"; // Electric Cobalt Blue for active connections
-          ctx.lineWidth = 1.6;
-          ctx.setLineDash([3, 3]);
+          ctx.strokeStyle = "rgba(0, 40, 255, 0.85)"; // Vibrant Cobalt Blue for active
+          ctx.lineWidth = 1.5;
         } else {
           ctx.strokeStyle = "rgba(255, 255, 255, 0.12)";
-          ctx.lineWidth = 0.8;
-          ctx.setLineDash([2, 4]);
+          ctx.lineWidth = 1.0;
         }
         ctx.stroke();
-        ctx.setLineDash([]);
 
-        // Animated telemetry pulse packets moving along edges
-        const pulseProgress = ((t * 0.6 + idx * 0.14) % 1);
+        // Animated laser telemetry pulse moving along edges
+        const pulseProgress = ((t * 0.4 + idx * 0.14) % 1);
         const pulseX = na.x + (nb.x - na.x) * pulseProgress;
         const pulseY = na.y + (nb.y - na.y) * pulseProgress;
 
+        // Create a tail for the laser effect
+        const tailLength = 0.15; // 15% of the edge length
+        const tailProgress = Math.max(0, pulseProgress - tailLength);
+        const tailX = na.x + (nb.x - na.x) * tailProgress;
+        const tailY = na.y + (nb.y - na.y) * tailProgress;
+
         ctx.beginPath();
-        ctx.arc(pulseX, pulseY, isConnected ? 2.5 : 1.6, 0, Math.PI * 2);
-        ctx.fillStyle = isConnected ? "#0028FF" : "rgba(255, 255, 255, 0.4)";
-        ctx.fill();
+        ctx.moveTo(tailX, tailY);
+        ctx.lineTo(pulseX, pulseY);
+        ctx.strokeStyle = isConnected ? "#0028FF" : "rgba(255, 255, 255, 0.5)";
+        ctx.lineWidth = isConnected ? 3 : 2;
+        ctx.lineCap = "round";
+        ctx.stroke();
       });
 
       // 2. Draw Nodes (Deep Slate, Pure White & Electric Cobalt)
@@ -404,7 +426,9 @@ export const Neo4jKnowledgeGraph: React.FC<Neo4jKnowledgeGraphProps> = ({
         ctx.font = isSelected ? "bold 10px Inter, sans-serif" : "9px Inter, sans-serif";
         ctx.fillStyle = isSelected ? "#FFFFFF" : "#94A3B8";
         ctx.textAlign = "center";
-        ctx.fillText(node.label, node.x, node.y - currentRadius - 8);
+        ctx.textBaseline = "middle";
+        const padding = isSelected || isHovered ? 20 : 16;
+        ctx.fillText(node.label, node.x, node.y - currentRadius - padding);
       });
 
       ctx.restore();
@@ -415,6 +439,7 @@ export const Neo4jKnowledgeGraph: React.FC<Neo4jKnowledgeGraphProps> = ({
 
     return () => {
       cancelAnimationFrame(animationFrameId);
+      resizeObserver.disconnect();
     };
   }, [visibleNodes, edges, selectedNode, hoveredNode, zoom, pan, nodeMap]);
 
@@ -422,8 +447,11 @@ export const Neo4jKnowledgeGraph: React.FC<Neo4jKnowledgeGraphProps> = ({
   const handleCanvasMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const rect = canvasRef.current?.getBoundingClientRect();
     if (!rect) return;
-    const clickX = (e.clientX - rect.left - pan.x) / zoom;
-    const clickY = (e.clientY - rect.top - pan.y) / zoom;
+    const offsetX = (rect.width - 960) / 2;
+    const offsetY = (rect.height - 640) / 2;
+
+    const clickX = (e.clientX - rect.left - pan.x - offsetX) / zoom;
+    const clickY = (e.clientY - rect.top - pan.y - offsetY) / zoom;
 
     const found = visibleNodes.find(n => {
       const dx = n.x - clickX;
@@ -442,8 +470,11 @@ export const Neo4jKnowledgeGraph: React.FC<Neo4jKnowledgeGraphProps> = ({
   const handleCanvasMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const rect = canvasRef.current?.getBoundingClientRect();
     if (!rect) return;
-    const moveX = (e.clientX - rect.left - pan.x) / zoom;
-    const moveY = (e.clientY - rect.top - pan.y) / zoom;
+    const offsetX = (rect.width - 960) / 2;
+    const offsetY = (rect.height - 640) / 2;
+
+    const moveX = (e.clientX - rect.left - pan.x - offsetX) / zoom;
+    const moveY = (e.clientY - rect.top - pan.y - offsetY) / zoom;
 
     if (isDragging) {
       setPan({
@@ -636,60 +667,77 @@ export const Neo4jKnowledgeGraph: React.FC<Neo4jKnowledgeGraphProps> = ({
 
           {/* Large Bold Swiss Title */}
           <h2 style={{
-            fontSize: '2.2rem',
+            fontSize: '2.4rem',
             fontWeight: 900,
             lineHeight: 1.1,
             letterSpacing: '-0.03em',
-            margin: '0 0 10px',
-            color: '#FFFFFF'
+            margin: '0 0 16px',
+            background: 'linear-gradient(180deg, #FFFFFF 0%, #94A3B8 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
           }}>
             {selectedNode.label.toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}
           </h2>
 
           {/* Subtitle / Tags line */}
-          <div style={{ fontSize: '0.78rem', color: '#94A3B8', marginBottom: '20px' }}>
-            {selectedNode.tags.join(' · ')}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '24px' }}>
+            {selectedNode.tags.map((tag, idx) => (
+              <span key={idx} style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                padding: '4px 10px',
+                borderRadius: '6px',
+                fontSize: '0.65rem',
+                color: '#94A3B8',
+                letterSpacing: '0.05em',
+                textTransform: 'uppercase'
+              }}>
+                {tag}
+              </span>
+            ))}
           </div>
 
           {/* Definition Paragraph */}
           <p style={{
-            fontSize: '0.9rem',
-            lineHeight: 1.6,
+            fontSize: '0.95rem',
+            lineHeight: 1.7,
             color: '#CBD5E1',
-            margin: '0 0 28px',
-            fontWeight: 400
+            margin: '0 0 32px',
+            fontWeight: 400,
+            opacity: 0.9
           }}>
             {selectedNode.meaning}
           </p>
 
           {/* Section: HEARD IN THE WILD */}
-          <div style={{ marginBottom: '28px' }}>
+          <div style={{ marginBottom: '32px' }}>
             <div style={{
               fontSize: '0.68rem',
               letterSpacing: '0.1em',
               textTransform: 'uppercase',
               fontWeight: 800,
               color: '#64748B',
-              marginBottom: '14px'
+              marginBottom: '16px'
             }}>
               HEARD IN THE WILD
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {selectedNode.wildQuotes.map((q, idx) => (
                 <div
                   key={idx}
                   style={{
                     alignSelf: q.isDark ? 'flex-end' : 'flex-start',
-                    maxWidth: '85%',
-                    background: q.isDark ? '#0028FF' : '#121828',
+                    maxWidth: '90%',
+                    background: q.isDark ? 'linear-gradient(135deg, #0028FF 0%, #001Fcc 100%)' : '#121828',
                     color: '#FFFFFF',
-                    borderRadius: '14px',
-                    padding: '10px 14px',
-                    fontSize: '0.8rem',
-                    lineHeight: 1.45,
-                    border: q.isDark ? 'none' : '1px solid rgba(255, 255, 255, 0.08)',
-                    boxShadow: q.isDark ? '0 4px 16px rgba(0, 40, 255, 0.4)' : 'none'
+                    borderRadius: q.isDark ? '14px 14px 2px 14px' : '14px 14px 14px 2px',
+                    padding: '12px 16px',
+                    fontSize: '0.82rem',
+                    lineHeight: 1.5,
+                    border: q.isDark ? '1px solid rgba(0, 40, 255, 0.5)' : '1px solid rgba(255, 255, 255, 0.08)',
+                    boxShadow: q.isDark ? '0 8px 24px rgba(0, 40, 255, 0.25)' : '0 4px 12px rgba(0,0,0,0.2)',
+                    position: 'relative'
                   }}
                 >
                   {q.text}
@@ -706,12 +754,12 @@ export const Neo4jKnowledgeGraph: React.FC<Neo4jKnowledgeGraphProps> = ({
               textTransform: 'uppercase',
               fontWeight: 800,
               color: '#64748B',
-              marginBottom: '12px'
+              marginBottom: '14px'
             }}>
               CONNECTS TO
             </div>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
               {selectedNode.connectsTo.map((targetId, idx) => {
                 const targetNode = nodeMap.get(targetId);
                 const label = targetNode ? targetNode.label.toLowerCase().replace(/\b\w/g, l => l.toUpperCase()) : targetId;
@@ -724,25 +772,38 @@ export const Neo4jKnowledgeGraph: React.FC<Neo4jKnowledgeGraphProps> = ({
                       }
                     }}
                     style={{
-                      background: '#121828',
-                      border: '1px solid rgba(255, 255, 255, 0.12)',
+                      background: 'rgba(255, 255, 255, 0.03)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
                       borderRadius: '999px',
-                      padding: '6px 14px',
+                      padding: '8px 16px',
                       fontSize: '0.78rem',
                       fontWeight: 600,
-                      color: '#FFFFFF',
+                      color: '#E2E8F0',
                       cursor: 'pointer',
-                      transition: 'all 0.15s ease'
+                      transition: 'all 0.2s ease',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px'
                     }}
                     onMouseEnter={e => {
                       e.currentTarget.style.background = '#0028FF';
                       e.currentTarget.style.borderColor = '#0028FF';
+                      e.currentTarget.style.color = '#FFFFFF';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 40, 255, 0.3)';
                     }}
                     onMouseLeave={e => {
-                      e.currentTarget.style.background = '#121828';
-                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
+                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                      e.currentTarget.style.color = '#E2E8F0';
+                      e.currentTarget.style.boxShadow = 'none';
                     }}
                   >
+                    <div style={{
+                      width: '6px',
+                      height: '6px',
+                      borderRadius: '50%',
+                      background: '#0028FF'
+                    }} />
                     {label}
                   </button>
                 );

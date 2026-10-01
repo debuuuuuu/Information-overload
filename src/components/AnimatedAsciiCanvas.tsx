@@ -30,16 +30,27 @@ export const AnimatedAsciiCanvas: React.FC<AnimatedAsciiCanvasProps> = ({
     const charWidth = fontSize * 0.6;
     const charHeight = fontSize;
 
-    const cols = Math.floor(width / charWidth);
-    const rows = Math.floor(height / charHeight);
-
     let animationId: number;
     let t = 0;
 
     const render = () => {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      const logicalWidth = rect.width;
+      const logicalHeight = rect.height;
+
+      if (canvas.width !== Math.floor(logicalWidth * dpr) || canvas.height !== Math.floor(logicalHeight * dpr)) {
+        canvas.width = Math.floor(logicalWidth * dpr);
+        canvas.height = Math.floor(logicalHeight * dpr);
+        ctx.scale(dpr, dpr);
+      }
+
+      const cols = Math.floor(logicalWidth / charWidth);
+      const rows = Math.floor(logicalHeight / charHeight);
+
       t += 0.035;
       ctx.fillStyle = '#05070D';
-      ctx.fillRect(0, 0, width, height);
+      ctx.fillRect(0, 0, logicalWidth, logicalHeight);
 
       ctx.font = `${fontSize}px 'JetBrains Mono', monospace`;
       ctx.textBaseline = 'top';
@@ -100,10 +111,10 @@ export const AnimatedAsciiCanvas: React.FC<AnimatedAsciiCanvasProps> = ({
 
       // Overlay cybernetic telemetry banner at bottom
       ctx.fillStyle = 'rgba(5, 7, 13, 0.85)';
-      ctx.fillRect(0, height - 26, width, 26);
+      ctx.fillRect(0, logicalHeight - 26, logicalWidth, 26);
       ctx.fillStyle = '#0028FF';
       ctx.font = "bold 9px 'JetBrains Mono', monospace";
-      ctx.fillText(`✦ ASCII MATRIX RUNTIME // LAT. 27°59'N · LON. 86°55'E // PRESET: ${activePreset.toUpperCase()}`, 14, height - 18);
+      ctx.fillText(`✦ ASCII MATRIX RUNTIME // LAT. 27°59'N · LON. 86°55'E // PRESET: ${activePreset.toUpperCase()}`, 14, logicalHeight - 18);
 
       animationId = requestAnimationFrame(render);
     };

@@ -22,6 +22,7 @@ import { AuthOnboardingFlow } from './components/AuthOnboardingFlow';
 import { Neo4jKnowledgeGraph } from './components/Neo4jKnowledgeGraph';
 import { McpHubView } from './components/McpHubView';
 import { ShowcaseView } from './components/ShowcaseView';
+import { ClusterDetailView } from './components/ClusterDetailView';
 import confetti from 'canvas-confetti';
 
 export function App() {
@@ -34,8 +35,9 @@ export function App() {
   const [importanceCluster, setImportanceCluster] = useState<Cluster | null>(null);
   const [sourcesCluster, setSourcesCluster] = useState<Cluster | null>(null);
   const [feedbackCluster, setFeedbackCluster] = useState<Cluster | null>(null);
+  const [activeCluster, setActiveCluster] = useState<Cluster | null>(null);
   const [askModalOpen, setAskModalOpen] = useState(false);
-  const [onboardingOpen, setOnboardingOpen] = useState(false);
+  const [onboardingOpen, setOnboardingOpen] = useState(true);
 
   // Architecture Audit HUD (retractable)
   const [tourBarOpen, setTourBarOpen] = useState(false);
@@ -288,6 +290,22 @@ export function App() {
             onQuickUsefulFeedback={handleQuickUsefulFeedback}
             onNavigateToTab={setActiveTab}
             onConsumptionStyleChange={style => setUserProfile({ ...userProfile, consumptionStyle: style })}
+            onOpenClusterDetail={c => {
+              setActiveCluster(c);
+              setActiveTab("cluster");
+            }}
+          />
+        )}
+
+        {activeTab === "cluster" && activeCluster && (
+          <ClusterDetailView
+            cluster={activeCluster}
+            userProfile={userProfile}
+            onBack={() => {
+              setActiveCluster(null);
+              setActiveTab("dashboard");
+            }}
+            onOpenSourceUrl={(url) => window.open(url, "_blank")}
           />
         )}
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { Cluster, UserProfile, ConsumptionStyle } from '../types';
 import { WidgetsBar } from './WidgetsBar';
+import { AnimatedAsciiCanvas } from './AnimatedAsciiCanvas';
 import {
   Sparkles, Globe, ShieldAlert, Award, FileText, ExternalLink, ThumbsUp,
   ThumbsDown, Filter, Search, ChevronDown, ChevronUp, Layers, CheckCircle2,
@@ -82,29 +83,20 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             pointerEvents: 'none'
           }} />
 
-          {/* Classical Roman / Greek Copperplate Engraving in Electric Cobalt Blue (Image 4 & 5 Motif) */}
+          {/* Animated ASCII Canvas replacing the static image */}
           <div style={{
             position: 'absolute',
             right: 0,
             top: 0,
             bottom: 0,
             width: '45%',
-            opacity: 0.32,
+            opacity: 0.65,
             pointerEvents: 'none',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            maskImage: 'linear-gradient(to left, rgba(0,0,0,1) 10%, rgba(0,0,0,0) 90%)',
+            WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,1) 10%, rgba(0,0,0,0) 90%)'
           }}>
-            <img
-              src="/art/cobalt_classical_engraving.jpg"
-              alt="Classical Architectural Engraving"
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                filter: 'contrast(1.3)',
-                maskImage: 'linear-gradient(to left, rgba(0,0,0,1) 10%, rgba(0,0,0,0.7) 60%, transparent 100%)',
-                WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,1) 10%, rgba(0,0,0,0.7) 60%, transparent 100%)'
-              }}
-            />
+            <AnimatedAsciiCanvas interactive={false} density="medium" width={600} height={300} />
           </div>
 
           {/* Left / Center Content */}
@@ -125,13 +117,19 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
 
             <h1 className="font-display" style={{
-              fontSize: '2.4rem',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '2px',
+              fontSize: '2.8rem',
               fontWeight: 900,
-              letterSpacing: '-0.04em',
+              letterSpacing: '-0.02em',
               color: 'var(--text-primary)',
-              lineHeight: 1.1
+              lineHeight: 1.1,
+              marginTop: '12px',
+              marginBottom: '4px'
             }}>
-              INFOLENS <span style={{ color: 'var(--cobalt)' }}>INTELLIGENCE OS</span>
+              <span>INFOLENS</span>
+              <span style={{ color: 'var(--cobalt)', fontSize: '1.15em' }}>INTELLIGENCE OS</span>
             </h1>
 
             <p className="font-serif" style={{
@@ -193,18 +191,36 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       </div>
 
       {/* =========================================================================
-          IDENTITY & ATTENTION CALIBRATION STUDIO (REFERENCE IMAGE 1 WELCOME BACK STYLE)
+          TWO COLUMN LAYOUT: FLOATING LEFT BLOCK & RIGHT MAIN FEED
           ========================================================================= */}
       <div style={{
-        background: 'var(--bg-secondary)',
-        border: '1px solid var(--border-medium)',
-        borderRadius: 'var(--radius-xl)',
-        boxShadow: 'var(--shadow-md)',
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
-        overflow: 'hidden'
+        gridTemplateColumns: 'minmax(330px, 380px) 1fr',
+        gap: '28px',
+        alignItems: 'start'
       }}>
-        {/* Left Form: Persona & Topics */}
+        {/* LEFT FLOATING BLOCK (Sidebar) */}
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '24px',
+          position: 'sticky',
+          top: '24px',
+          zIndex: 10
+        }}>
+          {/* =========================================================================
+              IDENTITY & ATTENTION CALIBRATION STUDIO
+              ========================================================================= */}
+          <div style={{
+            background: 'var(--bg-secondary)',
+            border: '1px solid var(--border-medium)',
+            borderRadius: 'var(--radius-xl)',
+            boxShadow: 'var(--shadow-md)',
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden'
+          }}>
+            {/* Left Form: Persona & Topics */}
         <div style={{ padding: '32px 36px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
@@ -328,22 +344,20 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           justifyContent: 'flex-end',
           padding: '28px'
         }}>
-          <img
-            src="/art/dither_zen_garden.jpg"
-            alt="Architectural Dithered Art"
-            style={{
-              position: 'absolute',
-              inset: 0,
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              opacity: 0.95
-            }}
-          />
+          {/* Replaced static dithered art with live ASCII canvas */}
           <div style={{
             position: 'absolute',
             inset: 0,
-            background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.1) 60%, transparent 100%)',
+            width: '100%',
+            height: '100%',
+            opacity: 0.8
+          }}>
+            <AnimatedAsciiCanvas interactive={true} density="medium" width={380} height={280} />
+          </div>
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 25%, rgba(0,0,0,0.2) 60%, transparent 100%)',
             pointerEvents: 'none'
           }} />
 
@@ -369,8 +383,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         onOpenSources={onOpenSources}
       />
 
-      {/* Filter Toolbar & Consumption Style Toggles (Strict Cobalt & Monochrome) */}
-      <div className="glass-panel" style={{ padding: '14px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '14px' }}>
+        </div> {/* End of Left Sidebar */}
+
+        {/* RIGHT MAIN FEED BLOCK */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          {/* Filter Toolbar & Consumption Style Toggles (Strict Cobalt & Monochrome) */}
+          <div className="glass-panel" style={{ padding: '14px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '14px' }}>
         {/* Category Filter Pills */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', overflowX: 'auto', paddingBottom: '2px' }}>
           {[
@@ -450,17 +468,18 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '20px' }}>
-            {highPriorityClusters.map(cluster => (
-              <FolderCard
-                key={cluster.id}
-                cluster={cluster}
-                userProfile={userProfile}
-                isPriority={true}
-                onOpenImportance={onOpenImportance}
-                onOpenSources={onOpenSources}
-                onOpenFeedback={onOpenFeedback}
-                onQuickUsefulFeedback={onQuickUsefulFeedback}
-              />
+            {highPriorityClusters.map((cluster, idx) => (
+              <div key={cluster.id} className="hero-animate-in" style={{ animationDelay: `${0.1 + idx * 0.08}s` }}>
+                <FolderCard
+                  cluster={cluster}
+                  userProfile={userProfile}
+                  isPriority={true}
+                  onOpenImportance={onOpenImportance}
+                  onOpenSources={onOpenSources}
+                  onOpenFeedback={onOpenFeedback}
+                  onQuickUsefulFeedback={onQuickUsefulFeedback}
+                />
+              </div>
             ))}
           </div>
         </div>
@@ -485,17 +504,18 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '20px' }}>
-            {relevantClusters.map(cluster => (
-              <FolderCard
-                key={cluster.id}
-                cluster={cluster}
-                userProfile={userProfile}
-                isPriority={false}
-                onOpenImportance={onOpenImportance}
-                onOpenSources={onOpenSources}
-                onOpenFeedback={onOpenFeedback}
-                onQuickUsefulFeedback={onQuickUsefulFeedback}
-              />
+            {relevantClusters.map((cluster, idx) => (
+              <div key={cluster.id} className="hero-animate-in" style={{ animationDelay: `${0.2 + idx * 0.08}s` }}>
+                <FolderCard
+                  cluster={cluster}
+                  userProfile={userProfile}
+                  isPriority={false}
+                  onOpenImportance={onOpenImportance}
+                  onOpenSources={onOpenSources}
+                  onOpenFeedback={onOpenFeedback}
+                  onQuickUsefulFeedback={onQuickUsefulFeedback}
+                />
+              </div>
             ))}
           </div>
         </div>
@@ -540,22 +560,25 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
           {expandedDigest && (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '20px', marginTop: '16px' }}>
-              {batchedDigestClusters.map(cluster => (
-                <FolderCard
-                  key={cluster.id}
-                  cluster={cluster}
-                  userProfile={userProfile}
-                  isPriority={false}
-                  onOpenImportance={onOpenImportance}
-                  onOpenSources={onOpenSources}
-                  onOpenFeedback={onOpenFeedback}
-                  onQuickUsefulFeedback={onQuickUsefulFeedback}
-                />
+              {batchedDigestClusters.map((cluster, idx) => (
+                <div key={cluster.id} className="hero-animate-in" style={{ animationDelay: `${0.05 + idx * 0.05}s` }}>
+                  <FolderCard
+                    cluster={cluster}
+                    userProfile={userProfile}
+                    isPriority={false}
+                    onOpenImportance={onOpenImportance}
+                    onOpenSources={onOpenSources}
+                    onOpenFeedback={onOpenFeedback}
+                    onQuickUsefulFeedback={onQuickUsefulFeedback}
+                  />
+                </div>
               ))}
             </div>
           )}
         </div>
       )}
+        </div> {/* End Right Feed Block */}
+      </div> {/* End Two Column Grid */}
     </div>
   );
 };
@@ -713,6 +736,15 @@ const FolderCard: React.FC<FolderCardProps> = ({
             >
               <Sparkles size={11} color="var(--cobalt)" />
               Why?
+            </button>
+
+            <button
+              onClick={() => onOpenClusterDetail(cluster)}
+              className="btn btn-cobalt btn-xs"
+              style={{ fontSize: '0.7rem', padding: '3px 8px', gap: '4px' }}
+              title="View full cluster dossier"
+            >
+              Open Dossier <ExternalLink size={11} />
             </button>
 
             <button
